@@ -6,11 +6,11 @@
 #define MQTT_SERVER_IP IPAddress(192, 168, 1, 30)
 #define KW_MQTT_MAX_TOPIC_LENGTH 30
 
-PubSubClient mqttClient;
+WiFiClient w;
+PubSubClient mqttClient(w);
 
-bool init_mqtt(WiFiClient wifiClient)
+bool init_mqtt()
 {
-    mqttClient = PubSubClient(wifiClient);
     mqttClient.setServer(MQTT_SERVER_IP, 1883);
     return true;
 }

@@ -1,7 +1,7 @@
 
 #include <ESP8266WiFi.h>
 
-bool init_mqtt(WiFiClient c);
+bool init_mqtt();
 bool loop_mqtt();
 void reconnect_mqtt();
 

@@ -31,8 +31,8 @@ void setup()
   if (init_display())
     Serial.println("Display started [OK]");
 
-  WiFiClient wifiClient = init_wifi();
-  if (init_mqtt(wifiClient))
+  init_wifi();
+  if (init_mqtt())
     Serial.println("");
 }
 
