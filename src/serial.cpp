@@ -61,6 +61,17 @@ bool read_data(pb_istream_t *stream, const pb_field_iter_t *field, void **arg)
         break;
     case Measurement_voltage_tag:
         publish_float(meta->device_id, measurement.sensor, "voltage", measurement.type.voltage);
+        break;
+    case Measurement_frequency_error_tag:
+        publish_float(meta->device_id, measurement.sensor, "frequency_error", measurement.type.frequency_error);
+        break;
+    case Measurement_rssi_tag:
+        publish_float(meta->device_id, measurement.sensor, "rssi", measurement.type.rssi);
+        break;
+    case Measurement_snr_tag:
+        publish_float(meta->device_id, measurement.sensor, "snr", measurement.type.snr);
+        break;
+
     default:
         break;
     }
