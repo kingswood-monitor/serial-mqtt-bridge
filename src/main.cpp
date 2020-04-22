@@ -105,6 +105,8 @@ bool read_data(pb_istream_t *stream, const pb_field_iter_t *field, void **arg)
   case Measurement_power_tag:
     publish_float(meta->device_id, "measurement/power", measurement.type.power);
     break;
+  case Measurement_voltage_tag:
+    publish_float(meta->device_id, "measurement/voltage", measurement.type.voltage);
   default:
     break;
   }
@@ -131,7 +133,6 @@ bool handle_packet(uint8_t packet_length)
     return false;
   }
 
-  publish_float(packet.meta.device_id, "measurement/voltage", packet.meta.voltage);
   return true;
 }
 
