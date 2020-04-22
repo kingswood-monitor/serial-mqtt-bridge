@@ -4,7 +4,7 @@
 
 // MQTT
 #define MQTT_SERVER_IP IPAddress(192, 168, 1, 30)
-#define KW_MQTT_MAX_TOPIC_LENGTH 30
+#define KW_MQTT_MAX_TOPIC_LENGTH 40
 
 WiFiClient w;
 PubSubClient mqttClient(w);
@@ -46,13 +46,13 @@ void reconnect_mqtt()
     }
 }
 
-void publish_float(int client, const char *topic, float val)
+void publish_float(int device_id, int sensor_id, const char *topic, float val)
 {
     char val_buf[10];
     char topic_buf[KW_MQTT_MAX_TOPIC_LENGTH];
 
-    sprintf(topic_buf, "%d/%s", client, topic);
-    sprintf(val_buf, "%.2f", val);
+    sprintf(topic_buf, "device/%d/sensor/%d/%s", device_id, sensor_id, topic);
+    sprintf(val_buf, "%.3f", val);
 
     Serial.print(topic_buf);
     Serial.print(" ");

@@ -42,26 +42,25 @@ bool read_data(pb_istream_t *stream, const pb_field_iter_t *field, void **arg)
     switch (measurement.which_type)
     {
     case Measurement_temperature_tag:
-        Serial.println(measurement.sensor);
-        publish_float(meta->device_id, "measurement/temperature", measurement.type.temperature);
+        publish_float(meta->device_id, measurement.sensor, "temperature", measurement.type.temperature);
         break;
     case Measurement_humidity_tag:
-        publish_float(meta->device_id, "measurement/humidity", measurement.type.humidity);
+        publish_float(meta->device_id, measurement.sensor, "humidity", measurement.type.humidity);
         break;
     case Measurement_pressure_tag:
-        publish_float(meta->device_id, "measurement/pressure", measurement.type.pressure);
+        publish_float(meta->device_id, measurement.sensor, "pressure", measurement.type.pressure);
         break;
     case Measurement_co2_tag:
-        publish_float(meta->device_id, "measurement/co2", measurement.type.co2);
+        publish_float(meta->device_id, measurement.sensor, "co2", measurement.type.co2);
         break;
     case Measurement_light_tag:
-        publish_float(meta->device_id, "measurement/light", measurement.type.light);
+        publish_float(meta->device_id, measurement.sensor, "light", measurement.type.light);
         break;
     case Measurement_power_tag:
-        publish_float(meta->device_id, "measurement/power", measurement.type.power);
+        publish_float(meta->device_id, measurement.sensor, "power", measurement.type.power);
         break;
     case Measurement_voltage_tag:
-        publish_float(meta->device_id, "measurement/voltage", measurement.type.voltage);
+        publish_float(meta->device_id, measurement.sensor, "voltage", measurement.type.voltage);
     default:
         break;
     }
