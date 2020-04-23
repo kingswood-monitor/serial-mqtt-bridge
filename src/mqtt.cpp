@@ -46,12 +46,12 @@ void reconnect_mqtt()
     }
 }
 
-void publish_float(int device_id, int sensor_id, const char *topic, float val)
+void publish_float(int device_type, int device_id, int sensor_id, const char *topic, float val)
 {
     char val_buf[10];
     char topic_buf[KW_MQTT_MAX_TOPIC_LENGTH];
 
-    sprintf(topic_buf, "device/%d/sensor/%d/%s", device_id, sensor_id, topic);
+    sprintf(topic_buf, "device/%d//%d/sensor/%d/%s", device_id, sensor_id, topic);
     sprintf(val_buf, "%.3f", val);
 
     Serial.print(topic_buf);
