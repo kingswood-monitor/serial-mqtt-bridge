@@ -39,40 +39,42 @@ bool read_data(pb_istream_t *stream, const pb_field_iter_t *field, void **arg)
         return false;
     }
 
+    publish_status(meta->location_id, "firmware", meta->firmware_version);
+
     switch (measurement.which_type)
     {
     case Measurement_temperature_tag:
-        publish_float(SensorType_Environment, meta->device_id, measurement.sensor, "temperature", measurement.type.temperature);
+        publish_measurement_float(meta->location_id, meta->sensor_type, measurement.sensor, "temperature", measurement.type.temperature);
         break;
     case Measurement_humidity_tag:
-        publish_float(SensorType_Environment, meta->device_id, measurement.sensor, "humidity", measurement.type.humidity);
+        publish_measurement_float(meta->location_id, meta->sensor_type, measurement.sensor, "humidity", measurement.type.humidity);
         break;
     case Measurement_pressure_tag:
-        publish_float(SensorType_Environment, meta->device_id, measurement.sensor, "pressure", measurement.type.pressure);
+        publish_measurement_float(meta->location_id, meta->sensor_type, measurement.sensor, "pressure", measurement.type.pressure);
         break;
     case Measurement_co2_tag:
-        publish_float(SensorType_Environment, meta->device_id, measurement.sensor, "co2", measurement.type.co2);
+        publish_measurement_float(meta->location_id, meta->sensor_type, measurement.sensor, "co2", measurement.type.co2);
         break;
     case Measurement_light_tag:
-        publish_float(SensorType_Environment, meta->device_id, measurement.sensor, "light", measurement.type.light);
+        publish_measurement_float(meta->location_id, meta->sensor_type, measurement.sensor, "light", measurement.type.light);
         break;
     case Measurement_electricity_tag:
-        publish_float(SensorType_Energy, meta->device_id, measurement.sensor, "electricity", measurement.type.electricity);
+        publish_measurement_float(meta->location_id, meta->sensor_type, measurement.sensor, "electricity", measurement.type.electricity);
         break;
     case Measurement_gas_tag:
-        publish_float(SensorType_Energy, meta->device_id, measurement.sensor, "gas", measurement.type.gas);
+        publish_measurement_float(meta->location_id, meta->sensor_type, measurement.sensor, "gas", measurement.type.gas);
         break;
     case Measurement_voltage_tag:
-        publish_float(SensorType_System, meta->device_id, measurement.sensor, "voltage", measurement.type.voltage);
+        publish_measurement_float(meta->location_id, meta->sensor_type, measurement.sensor, "voltage", measurement.type.voltage);
         break;
     case Measurement_frequency_error_tag:
-        publish_float(SensorType_System, meta->device_id, measurement.sensor, "frequency_error", measurement.type.frequency_error);
+        publish_measurement_float(meta->location_id, meta->sensor_type, measurement.sensor, "frequency_error", measurement.type.frequency_error);
         break;
     case Measurement_rssi_tag:
-        publish_float(SensorType_System, meta->device_id, measurement.sensor, "rssi", measurement.type.rssi);
+        publish_measurement_float(meta->location_id, meta->sensor_type, measurement.sensor, "rssi", measurement.type.rssi);
         break;
     case Measurement_snr_tag:
-        publish_float(SensorType_System, meta->device_id, measurement.sensor, "snr", measurement.type.snr);
+        publish_measurement_float(meta->location_id, meta->sensor_type, measurement.sensor, "snr", measurement.type.snr);
         break;
 
     default:

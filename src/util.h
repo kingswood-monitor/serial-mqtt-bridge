@@ -10,7 +10,7 @@
 
 // firmware info
 #define FIRMWARE_NAME "LoRa/Wifi Bridge "
-#define FIRMWARE_VERSION "0.3"
+#define FIRMWARE_VERSION "1.0.0"
 #define DEVICE_TYPE "HUZZAHESP8266"
 
 // Hardware configuration
