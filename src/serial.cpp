@@ -56,8 +56,11 @@ bool read_data(pb_istream_t *stream, const pb_field_iter_t *field, void **arg)
     case Measurement_light_tag:
         publish_float(meta->device_id, measurement.sensor, "light", measurement.type.light);
         break;
-    case Measurement_power_tag:
-        publish_float(meta->device_id, measurement.sensor, "power", measurement.type.power);
+    case Measurement_electricity_tag:
+        publish_float(meta->device_id, measurement.sensor, "electricity", measurement.type.electricity);
+        break;
+    case Measurement_gas_tag:
+        publish_float(meta->device_id, measurement.sensor, "gas", measurement.type.gas);
         break;
     case Measurement_voltage_tag:
         publish_float(meta->device_id, measurement.sensor, "voltage", measurement.type.voltage);
