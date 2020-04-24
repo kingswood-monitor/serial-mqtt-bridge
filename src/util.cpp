@@ -19,7 +19,7 @@ bool init_device()
     Serial.begin(57600);
     delay(2000);
 
-    logo(FIRMWARE_NAME, FIRMWARE_VERSION, DEVICE_TYPE);
+    logo(FIRMWARE_NAME, FIRMWARE_VERSION, CHIP_ID);
 
     return true;
 }
