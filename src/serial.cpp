@@ -39,8 +39,6 @@ bool read_data(pb_istream_t *stream, const pb_field_iter_t *field, void **arg)
         return false;
     }
 
-    publish_status(meta->location_id, "firmware", meta->firmware_version);
-
     switch (measurement.which_type)
     {
     case Measurement_temperature_tag:
@@ -95,6 +93,8 @@ bool handle_packet(uint8_t packet_length)
     packet.measurements.arg = &packet.meta;
     pb_istream_t stream = pb_istream_from_buffer(buf, packet_length);
     bool success = pb_decode(&stream, Packet_fields, &packet);
+
+    publish_status(packet.meta.location_id, "firmware", packet.meta.firmware_version);
 
     if (!success)
     {
