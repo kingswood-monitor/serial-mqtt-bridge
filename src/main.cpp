@@ -13,8 +13,11 @@
 #include <pb_decode.h>
 #include "packet.pb.h"
 
+#include "socket.h"
 #include "util.h"
 #include "serial.h"
+
+#define REFRESH_MILLIS 1000
 
 void setup()
 {
@@ -26,9 +29,21 @@ void setup()
 
   if (!init_display())
     Serial.println("ERROR: Failed to start display");
+
+  if (!init_socket())
+  {
+    Serial.println("ERROR: Failed to connect socket. Freezing...");
+    while (1)
+      ;
+  }
 }
+
+uint16_t packet_id = 0;
+uint8_t packet_buffer[255];
 
 void loop()
 {
-  delay(1000);
+  poll_serial();
+
+  // delay(REFRESH_MILLIS);
 }

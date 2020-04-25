@@ -6,4 +6,4 @@
  */
 
 bool init_serial();
-void poll_packet();
+void poll_serial();

@@ -4,6 +4,7 @@
 
 #include "DigitalOut.h"
 #include "serial.h"
+#include "socket.h"
 #include "packet.pb.h"
 #include "config.h"
 #include "util.h"
@@ -13,7 +14,7 @@
 SoftwareSerial SoftSerial(SERIAL_PIN, -1); // RX, TX
 Kingswood::Pin::DigitalOut serial_red_led(RED_LED_PIN);
 
-bool handle_packet(uint8_t packet_length);
+bool handle_packet(uint8_t bytes_to_read);
 
 bool init_serial()
 {
@@ -37,7 +38,7 @@ uint8_t bytes_to_read = 0;
 state_machine state = START;
 
 // \0\0\0\0${LEN}${PACKET}
-void poll_packet()
+void poll_serial()
 {
     while (SoftSerial.available() > 0)
     {
@@ -76,82 +77,15 @@ void poll_packet()
     }
 }
 
-bool handle_packet(uint8_t packet_length)
+bool handle_packet(uint8_t bytes_to_read)
 {
+
+    // Read packet from Serial1
+    uint8_t buf[255] = {};
+    SoftSerial.readBytes(buf, bytes_to_read);
+
     // Send to websocket
-
-    // uint8_t buf[255] = {};
-    // SoftSerial.readBytes(buf, packet_length);
-
-    // // Decode packet
-    // Packet packet = Packet_init_zero;
-    // packet.measurements.funcs.decode = read_data;
-    // packet.measurements.arg = &packet.meta;
-    // pb_istream_t stream = pb_istream_from_buffer(buf, packet_length);
-    // bool success = pb_decode(&stream, Packet_fields, &packet);
-
-    // publish_status(packet.meta.location, "firmware", packet.meta.firmware_version);
-
-    // if (!success)
-    // {
-    //     Serial.print("DECODING ERROR: ");
-    //     Serial.println(stream.errmsg);
-    //     return false;
-    // }
+    socket_send_measurement(buf, bytes_to_read);
 
     return true;
 }
-
-// bool read_data(pb_istream_t *stream, const pb_field_iter_t *field, void **arg)
-// {
-//     Meta *meta = *(Meta **)arg;
-
-//     Measurement measurement;
-//     if (!pb_decode(stream, Measurement_fields, &measurement))
-//     {
-//         Serial.println("read_data.pb_decode = Decode error, false");
-//         return false;
-//     }
-
-//     switch (measurement.which_type)
-//     {
-//     case Measurement_temperature_tag:
-//         publish_measurement_float(meta->location, meta->sensor_type, measurement.sensor, "temperature", measurement.type.temperature);
-//         break;
-//     case Measurement_humidity_tag:
-//         publish_measurement_float(meta->location, meta->sensor_type, measurement.sensor, "humidity", measurement.type.humidity);
-//         break;
-//     case Measurement_pressure_tag:
-//         publish_measurement_float(meta->location, meta->sensor_type, measurement.sensor, "pressure", measurement.type.pressure);
-//         break;
-//     case Measurement_co2_tag:
-//         publish_measurement_float(meta->location, meta->sensor_type, measurement.sensor, "co2", measurement.type.co2);
-//         break;
-//     case Measurement_light_tag:
-//         publish_measurement_float(meta->location, meta->sensor_type, measurement.sensor, "light", measurement.type.light);
-//         break;
-//     case Measurement_electricity_tag:
-//         publish_measurement_float(meta->location, meta->sensor_type, measurement.sensor, "electricity", measurement.type.electricity);
-//         break;
-//     case Measurement_gas_tag:
-//         publish_measurement_float(meta->location, meta->sensor_type, measurement.sensor, "gas", measurement.type.gas);
-//         break;
-//     case Measurement_voltage_tag:
-//         publish_measurement_float(meta->location, meta->sensor_type, measurement.sensor, "voltage", measurement.type.voltage);
-//         break;
-//     case Measurement_frequency_error_tag:
-//         publish_measurement_float(meta->location, meta->sensor_type, measurement.sensor, "frequency_error", measurement.type.frequency_error);
-//         break;
-//     case Measurement_rssi_tag:
-//         publish_measurement_float(meta->location, meta->sensor_type, measurement.sensor, "rssi", measurement.type.rssi);
-//         break;
-//     case Measurement_snr_tag:
-//         publish_measurement_float(meta->location, meta->sensor_type, measurement.sensor, "snr", measurement.type.snr);
-//         break;
-
-//     default:
-//         break;
-//     }
-
-//     return true;
-// }
