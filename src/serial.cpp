@@ -4,8 +4,9 @@
 
 #include "serial.h"
 #include "packet.pb.h"
-#include "mqtt.h"
 #include "util.h"
+
+#define SERIAL_PIN 13
 
 SoftwareSerial SoftSerial(SERIAL_PIN, -1); // RX, TX
 
@@ -42,37 +43,37 @@ bool read_data(pb_istream_t *stream, const pb_field_iter_t *field, void **arg)
     switch (measurement.which_type)
     {
     case Measurement_temperature_tag:
-        publish_measurement_float(meta->location_id, meta->sensor_type, measurement.sensor, "temperature", measurement.type.temperature);
+        publish_measurement_float(meta->location, meta->sensor_type, measurement.sensor, "temperature", measurement.type.temperature);
         break;
     case Measurement_humidity_tag:
-        publish_measurement_float(meta->location_id, meta->sensor_type, measurement.sensor, "humidity", measurement.type.humidity);
+        publish_measurement_float(meta->location, meta->sensor_type, measurement.sensor, "humidity", measurement.type.humidity);
         break;
     case Measurement_pressure_tag:
-        publish_measurement_float(meta->location_id, meta->sensor_type, measurement.sensor, "pressure", measurement.type.pressure);
+        publish_measurement_float(meta->location, meta->sensor_type, measurement.sensor, "pressure", measurement.type.pressure);
         break;
     case Measurement_co2_tag:
-        publish_measurement_float(meta->location_id, meta->sensor_type, measurement.sensor, "co2", measurement.type.co2);
+        publish_measurement_float(meta->location, meta->sensor_type, measurement.sensor, "co2", measurement.type.co2);
         break;
     case Measurement_light_tag:
-        publish_measurement_float(meta->location_id, meta->sensor_type, measurement.sensor, "light", measurement.type.light);
+        publish_measurement_float(meta->location, meta->sensor_type, measurement.sensor, "light", measurement.type.light);
         break;
     case Measurement_electricity_tag:
-        publish_measurement_float(meta->location_id, meta->sensor_type, measurement.sensor, "electricity", measurement.type.electricity);
+        publish_measurement_float(meta->location, meta->sensor_type, measurement.sensor, "electricity", measurement.type.electricity);
         break;
     case Measurement_gas_tag:
-        publish_measurement_float(meta->location_id, meta->sensor_type, measurement.sensor, "gas", measurement.type.gas);
+        publish_measurement_float(meta->location, meta->sensor_type, measurement.sensor, "gas", measurement.type.gas);
         break;
     case Measurement_voltage_tag:
-        publish_measurement_float(meta->location_id, meta->sensor_type, measurement.sensor, "voltage", measurement.type.voltage);
+        publish_measurement_float(meta->location, meta->sensor_type, measurement.sensor, "voltage", measurement.type.voltage);
         break;
     case Measurement_frequency_error_tag:
-        publish_measurement_float(meta->location_id, meta->sensor_type, measurement.sensor, "frequency_error", measurement.type.frequency_error);
+        publish_measurement_float(meta->location, meta->sensor_type, measurement.sensor, "frequency_error", measurement.type.frequency_error);
         break;
     case Measurement_rssi_tag:
-        publish_measurement_float(meta->location_id, meta->sensor_type, measurement.sensor, "rssi", measurement.type.rssi);
+        publish_measurement_float(meta->location, meta->sensor_type, measurement.sensor, "rssi", measurement.type.rssi);
         break;
     case Measurement_snr_tag:
-        publish_measurement_float(meta->location_id, meta->sensor_type, measurement.sensor, "snr", measurement.type.snr);
+        publish_measurement_float(meta->location, meta->sensor_type, measurement.sensor, "snr", measurement.type.snr);
         break;
 
     default:
@@ -94,7 +95,7 @@ bool handle_packet(uint8_t packet_length)
     pb_istream_t stream = pb_istream_from_buffer(buf, packet_length);
     bool success = pb_decode(&stream, Packet_fields, &packet);
 
-    publish_status(packet.meta.location_id, "firmware", packet.meta.firmware_version);
+    publish_status(packet.meta.location, "firmware", packet.meta.firmware_version);
 
     if (!success)
     {

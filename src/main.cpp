@@ -1,41 +1,34 @@
 /*
     Kingswood Monitoring System
-    MQTT/Serial Bridge
+    Websocket/Serial Bridge
 
-    Receives a Protobuf enecoded packet by Serial and broadcasts data via MQTT topics.
+    Receives a Protobuf enecoded packet by Serial and broadcasts data via websocket.
 
     Hardware: Adafruit feather32u4 RFM95
     OS:       Arduino
 
  */
+#include <Arduino.h>
 
 #include <pb_decode.h>
 #include "packet.pb.h"
 
 #include "util.h"
-#include "mqtt.h"
 #include "serial.h"
 
 void setup()
 {
-  if (init_device())
-    Serial.println("Device started [OK]");
+  if (!init_device())
+    Serial.println("ERROR: Failed to start device");
 
-  if (init_serial())
-    Serial.println("");
+  if (!init_serial())
+    Serial.println("ERROR: Failed to start Serial1");
 
-  if (init_display())
-    Serial.println("Display started [OK]");
-
-  init_wifi();
-  if (init_mqtt())
-    Serial.println("");
+  if (!init_display())
+    Serial.println("ERROR: Failed to start display");
 }
 
 void loop()
 {
-  if (!loop_mqtt())
-    reconnect_mqtt();
-
-  poll_packet();
+  delay(1000);
 }
