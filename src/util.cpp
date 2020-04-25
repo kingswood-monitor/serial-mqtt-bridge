@@ -1,25 +1,36 @@
 #include <Arduino.h>
+
+#include <SoftwareSerial.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
-#include <PubSubClient.h>
+#include "DigitalOut.h"
 
+#include "config.h"
 #include "util.h"
 #include "secrets.h"
 
 Adafruit_SSD1306 display = Adafruit_SSD1306(128, 32, &Wire);
-WiFiClient wifiClient;
+Kingswood::Pin::DigitalOut util_red_led(RED_LED_PIN);
+
+char chip_id[8];
+
+void display_logo(char *title, char *version);
+void generate_chip_id();
+void reconnect();
+void flash_LED(int times, int millis);
 
 bool init_device()
 {
-    pinMode(LED_RED, OUTPUT);
-    pinMode(LED_BLUE, OUTPUT);
-    digitalWrite(LED_RED, HIGH); // Off
-    digitalWrite(LED_BLUE, HIGH);
-
     Serial.begin(57600);
     delay(2000);
 
-    logo(FIRMWARE_NAME, FIRMWARE_VERSION, CHIP_ID);
+    util_red_led.begin();
+    util_red_led.activeLow();
+    util_red_led.turnOff();
+
+    display_logo(FIRMWARE_NAME, FIRMWARE_VERSION);
+
+    generate_chip_id();
 
     return true;
 }
@@ -51,59 +62,9 @@ bool init_display()
     return true;
 }
 
-WiFiClient init_wifi()
+void generate_chip_id()
 {
-    char line_0[32], line_1[32], line_2[32];
-
-    // update OLED
-    display.clearDisplay();
-    display.setCursor(0, 0);
-    sprintf(line_0, "SSID: %s", SSID_NAME);
-    display.print(line_0);
-    display.display();
-
-    delay(10);
-    // We start by connecting to a WiFi network
-    Serial.println();
-    Serial.print("Connecting to ");
-    Serial.println(SSID_NAME);
-
-    WiFi.begin(SSID_NAME, SSID_PASS);
-
-    bool led_state = false;
-    while (WiFi.status() != WL_CONNECTED)
-    {
-        digitalWrite(LED_BLUE, led_state);
-        delay(200);
-        led_state = !led_state;
-        digitalWrite(LED_BLUE, led_state);
-        delay(200);
-
-        Serial.print(".");
-    }
-
-    digitalWrite(LED_BLUE, LOW);
-
-    randomSeed(micros());
-
-    Serial.println("");
-    Serial.println("WiFi connected");
-    Serial.println("IP address: ");
-    Serial.println(WiFi.localIP());
-    Serial.println(WiFi.RSSI());
-
-    uint32_t ip = (uint32_t)WiFi.localIP();
-    sprintf(line_1, "IP  : %u.%u.%u.%u", ip & 0xFF, (ip >> 8) & 0xFF, (ip >> 16) & 0xFF, (ip >> 24) & 0xFF);
-    display.setCursor(0, 10);
-    display.print(line_1);
-
-    sprintf(line_2, "RSSI: %idB", WiFi.RSSI());
-    display.setCursor(0, 20);
-    display.print(line_2);
-
-    display.display();
-
-    return wifiClient;
+    sprintf(chip_id, "%08X\0", ESP.getChipId());
 }
 
 void flash_LED(int times, int millis)
@@ -117,10 +78,10 @@ void flash_LED(int times, int millis)
     }
 }
 
-void logo(char *title, char *version, char *type)
+void display_logo(char *title, char *version)
 {
     char strap_line[200];
-    sprintf(strap_line, "                  |___/  %s v%s on %s", title, version, type);
+    sprintf(strap_line, "                  |___/  %s v%s", title, version);
 
     Serial.println("  _  __ _                                                _ ");
     Serial.println(" | |/ /(_) _ __    __ _  ___ __      __ ___    ___    __| |");
